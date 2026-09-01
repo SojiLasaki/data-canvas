@@ -69,7 +69,7 @@ export function makeNode(
       dataType: "time-series",
       structured: true,
       supportsVisualization: true,
-      supportedInputs: ["time-series", "tabular", "pricing", "categorical"],
+      supportedInputs: ["time-series", "tabular", "pricing", "categorical", "parameter"],
       supportedOutputs: ["time-series", "tabular", "categorical"],
     },
     document: {
