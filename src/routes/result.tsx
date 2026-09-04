@@ -10,6 +10,8 @@ import { ResultTable } from "@/components/result/ResultTable";
 import { PipelineStack } from "@/components/result/PipelineStack";
 import { StepDetails } from "@/components/result/StepDetails";
 import { SourcePanel } from "@/components/result/SourcePanel";
+import { InlineCanvas } from "@/components/result/InlineCanvas";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -52,6 +54,8 @@ function ResultPage() {
   const [advanced, setAdvanced] = useState(false);
   const [command, setCommand] = useState("");
   const [log, setLog] = useState<string[]>([]);
+  const [canvasOpen, setCanvasOpen] = useState(false);
+
 
   useEffect(() => {
     setPipeline(buildPipeline(prompt));
@@ -296,6 +300,36 @@ function ResultPage() {
               </Link>
             </span>
           </div>
+
+          {/* Hidden node canvas — expands in place at the bottom of the page */}
+          <section className="border border-border bg-card" aria-label="Node canvas">
+            <button
+              type="button"
+              onClick={() => setCanvasOpen((c) => !c)}
+              aria-expanded={canvasOpen}
+              className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50"
+            >
+              <span className="flex items-center gap-2 text-sm font-semibold text-navy">
+                <Workflow className="h-4 w-4 text-primary" aria-hidden /> Node canvas
+                <span className="text-xs font-normal text-muted-foreground">
+                  {pipeline.steps.length} nodes · same workflow as above
+                </span>
+              </span>
+              <ChevronDown
+                className={cn("h-4 w-4 text-muted-foreground transition-transform", canvasOpen && "rotate-180")}
+                aria-hidden
+              />
+            </button>
+            {canvasOpen && (
+              <div className="space-y-2 border-t border-border p-3">
+                <InlineCanvas pipeline={pipeline} />
+                <Button variant="outline" size="sm" onClick={openInCanvas}>
+                  <Workflow className="mr-1.5 h-3.5 w-3.5" /> Open in full canvas
+                </Button>
+              </div>
+            )}
+          </section>
+
         </div>
 
         {/* Advanced column */}
