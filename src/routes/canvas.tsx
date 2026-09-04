@@ -161,11 +161,11 @@ function CanvasPage() {
     const graph = pipelineToGraph(pipeline);
     setNodes(graph.nodes);
     setEdges(graph.edges);
-    window.setTimeout(() => fitView({ padding: 0.2 }), 60);
+    window.setTimeout(() => void fitView({ padding: 0.2, duration: 200 }), 350);
     setMessages((m) => [
-      ...m,
+      ...m.filter((msg) => msg.id !== "pipeline-import"),
       {
-        id: nextId("m"),
+        id: "pipeline-import",
         role: "assistant",
         text: "Opened your result as a node graph. Every modifier from the result view is here as a node.",
         workflow: pipeline.steps.map((s) => s.title),
