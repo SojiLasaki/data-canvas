@@ -10,6 +10,8 @@ import { ResultTable } from "@/components/result/ResultTable";
 import { PipelineStack } from "@/components/result/PipelineStack";
 import { StepDetails } from "@/components/result/StepDetails";
 import { SourcePanel } from "@/components/result/SourcePanel";
+import { InlineCanvas } from "@/components/result/InlineCanvas";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -52,6 +54,8 @@ function ResultPage() {
   const [advanced, setAdvanced] = useState(false);
   const [command, setCommand] = useState("");
   const [log, setLog] = useState<string[]>([]);
+  const [canvasOpen, setCanvasOpen] = useState(false);
+
 
   useEffect(() => {
     setPipeline(buildPipeline(prompt));
