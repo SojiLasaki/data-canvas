@@ -14,7 +14,7 @@ import {
 } from "recharts";
 import type { PipelineResult } from "@/lib/pipeline/types";
 
-const SERIES_COLORS = ["var(--color-primary)", "var(--color-uncertain)", "var(--color-valid)"];
+const SERIES_COLORS = ["var(--primary)", "var(--uncertain)", "var(--valid)"];
 
 export function ResultChart({
   result,
@@ -31,21 +31,21 @@ export function ResultChart({
   const axis = {
     dataKey: "bucket",
     tick: { fontSize: 10 },
-    stroke: "var(--color-muted-foreground)",
+    stroke: "var(--muted-foreground)",
     minTickGap: 32,
   } as const;
 
   const common = (
     <>
-      {grid && <CartesianGrid stroke="var(--color-border)" vertical={false} />}
+      {grid && <CartesianGrid stroke="var(--border)" vertical={false} />}
       <XAxis {...axis} />
-      <YAxis tick={{ fontSize: 10 }} stroke="var(--color-muted-foreground)" width={56} />
+      <YAxis tick={{ fontSize: 10 }} stroke="var(--muted-foreground)" width={56} />
       <Tooltip
         contentStyle={{
           borderRadius: 0,
           border: "1px solid var(--color-border)",
           fontSize: 12,
-          background: "var(--color-card)",
+          background: "var(--card)",
         }}
       />
       {legend && <Legend wrapperStyle={{ fontSize: 11 }} />}
