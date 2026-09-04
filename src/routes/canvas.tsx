@@ -161,7 +161,7 @@ function CanvasPage() {
     const graph = pipelineToGraph(pipeline);
     setNodes(graph.nodes);
     setEdges(graph.edges);
-    window.setTimeout(() => void fitView({ padding: 0.2, duration: 200 }), 350);
+    [120, 500, 1000].forEach((d) => window.setTimeout(() => void fitView({ padding: 0.2, duration: 200 }), d));
     setMessages((m) => [
       ...m.filter((msg) => msg.id !== "pipeline-import"),
       {
