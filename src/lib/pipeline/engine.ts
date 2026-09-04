@@ -76,6 +76,7 @@ const SPECS: Record<StepKind, ParamSpec[]> = {
     { key: "strategy", label: "Strategy", options: ["Ignore", "Interpolate", "Zero fill", "Drop rows"] },
   ],
   compare: [
+    { key: "against", label: "Compare with", options: LOCATIONS },
     { key: "basis", label: "Basis", options: ["Absolute", "Difference", "Percent"] },
   ],
   join: [
