@@ -35,9 +35,8 @@ export function ResultChart({
     minTickGap: 32,
   } as const;
 
-  const common = (
-    <>
-      {grid && <CartesianGrid stroke="var(--border)" vertical={false} />}
+  const common = [
+      grid && <CartesianGrid stroke="var(--border)" vertical={false} />}
       <XAxis {...axis} />
       <YAxis tick={{ fontSize: 10 }} stroke="var(--muted-foreground)" width={56} />
       <Tooltip
