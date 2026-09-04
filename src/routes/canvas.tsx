@@ -51,9 +51,11 @@ import { makeNode } from "@/lib/canvas/nodeFactory";
 import type { MisoNodeData } from "@/lib/canvas/types";
 import { aiService } from "@/services/aiService";
 import { canvasService } from "@/services/canvasService";
+import { pipelineStore } from "@/lib/pipeline/store";
+import { pipelineToGraph } from "@/lib/pipeline/graph";
 
 export const Route = createFileRoute("/canvas")({
-  validateSearch: z.object({ q: z.string().optional() }),
+  validateSearch: z.object({ q: z.string().optional(), from: z.string().optional() }),
   component: () => (
     <ReactFlowProvider>
       <CanvasPage />
@@ -89,8 +91,8 @@ const nodeTypes = { miso: MisoNodeCard };
 const edgeTypes = { miso: MisoEdgeLine };
 
 function CanvasPage() {
-  const { q } = Route.useSearch();
-  const { screenToFlowPosition } = useReactFlow();
+  const { q, from } = Route.useSearch();
+  const { screenToFlowPosition, fitView } = useReactFlow();
   const wrapper = useRef<HTMLDivElement>(null);
 
   const [nodes, setNodes] = useState<MisoNode[]>([]);
@@ -104,6 +106,7 @@ function CanvasPage() {
   const [run, setRun] = useState<RunState>({ phase: "idle" });
   const [tab, setTab] = useState("assistant");
   const generatedFor = useRef<string | null>(null);
+  const importedPipeline = useRef(false);
 
   const selectedNode = useMemo(() => nodes.find((n) => n.selected) ?? null, [nodes]);
   const upstream = useMemo(() => {
@@ -151,14 +154,34 @@ function CanvasPage() {
   }, [q, generate]);
 
   useEffect(() => {
-    if (!q) {
+    if (from !== "result" || importedPipeline.current) return;
+    importedPipeline.current = true;
+    const pipeline = pipelineStore.load();
+    if (!pipeline) return;
+    const graph = pipelineToGraph(pipeline);
+    setNodes(graph.nodes);
+    setEdges(graph.edges);
+    [120, 500, 1000].forEach((d) => window.setTimeout(() => void fitView({ padding: 0.2, duration: 200 }), d));
+    setMessages((m) => [
+      ...m.filter((msg) => msg.id !== "pipeline-import"),
+      {
+        id: "pipeline-import",
+        role: "assistant",
+        text: "Opened your result as a node graph. Every modifier from the result view is here as a node.",
+        workflow: pipeline.steps.map((s) => s.title),
+      },
+    ]);
+  }, [from, fitView]);
+
+  useEffect(() => {
+    if (!q && from !== "result") {
       const saved = canvasService.load();
       if (saved && saved.nodes.length) {
         setNodes(saved.nodes);
         setEdges(saved.edges);
       }
     }
-  }, [q]);
+  }, [q, from]);
 
   /* ---------- graph mutations ---------- */
   const onNodesChange = useCallback(

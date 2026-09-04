@@ -40,7 +40,7 @@ function DataPage() {
       r.keywords.some((k) => k.includes(q.toLowerCase())),
   );
 
-  const open = (prompt: string) => void navigate({ to: "/canvas", search: { q: prompt } });
+  const open = (prompt: string) => void navigate({ to: "/result", search: { q: prompt } });
 
   return (
     <div className="min-h-screen bg-background">

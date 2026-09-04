@@ -44,7 +44,7 @@ function Home() {
 
   const ask = (q: string) => {
     if (!q.trim()) return;
-    void navigate({ to: "/canvas", search: { q: q.trim() } });
+    void navigate({ to: "/result", search: { q: q.trim() } });
   };
 
   return (
