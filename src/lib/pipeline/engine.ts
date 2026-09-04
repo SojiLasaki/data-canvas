@@ -282,8 +282,8 @@ export function runPipeline(pipeline: Pipeline): PipelineResult {
     rows,
     stats: [
       { label: `${operation} ${label.toLowerCase()}`, value: fmt(Math.round(avg * 100) / 100) },
-      { label: "Peak", value: fmt(Math.max(...nums, 0)) },
-      { label: "Minimum", value: fmt(Math.min(...nums, 0)) },
+      { label: "Peak", value: fmt(nums.length ? Math.max(...nums) : 0) },
+      { label: "Minimum", value: fmt(nums.length ? Math.min(...nums) : 0) },
       { label: "Data points", value: String(rows.length) },
     ],
     narrative: `${locations.join(" and ")} ${label.toLowerCase()} over the ${range.toLowerCase()}, aggregated ${frequency.toLowerCase()} using the ${operation.toLowerCase()} of each interval. Values are reported in ${unit} and sourced live from the MISO ${pricing ? "pricing" : "load"} API.`,
