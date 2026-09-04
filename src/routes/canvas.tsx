@@ -51,9 +51,11 @@ import { makeNode } from "@/lib/canvas/nodeFactory";
 import type { MisoNodeData } from "@/lib/canvas/types";
 import { aiService } from "@/services/aiService";
 import { canvasService } from "@/services/canvasService";
+import { pipelineStore } from "@/lib/pipeline/store";
+import { pipelineToGraph } from "@/lib/pipeline/graph";
 
 export const Route = createFileRoute("/canvas")({
-  validateSearch: z.object({ q: z.string().optional() }),
+  validateSearch: z.object({ q: z.string().optional(), from: z.string().optional() }),
   component: () => (
     <ReactFlowProvider>
       <CanvasPage />
@@ -89,7 +91,7 @@ const nodeTypes = { miso: MisoNodeCard };
 const edgeTypes = { miso: MisoEdgeLine };
 
 function CanvasPage() {
-  const { q } = Route.useSearch();
+  const { q, from } = Route.useSearch();
   const { screenToFlowPosition } = useReactFlow();
   const wrapper = useRef<HTMLDivElement>(null);
 
@@ -151,14 +153,32 @@ function CanvasPage() {
   }, [q, generate]);
 
   useEffect(() => {
-    if (!q) {
+    if (from !== "result") return;
+    const pipeline = pipelineStore.load();
+    if (!pipeline) return;
+    const graph = pipelineToGraph(pipeline);
+    setNodes(graph.nodes);
+    setEdges(graph.edges);
+    setMessages((m) => [
+      ...m,
+      {
+        id: nextId("m"),
+        role: "assistant",
+        text: "Opened your result as a node graph. Every modifier from the result view is here as a node.",
+        workflow: pipeline.steps.map((s) => s.title),
+      },
+    ]);
+  }, [from]);
+
+  useEffect(() => {
+    if (!q && from !== "result") {
       const saved = canvasService.load();
       if (saved && saved.nodes.length) {
         setNodes(saved.nodes);
         setEdges(saved.edges);
       }
     }
-  }, [q]);
+  }, [q, from]);
 
   /* ---------- graph mutations ---------- */
   const onNodesChange = useCallback(
