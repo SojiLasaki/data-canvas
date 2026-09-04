@@ -36,20 +36,21 @@ export function ResultChart({
   } as const;
 
   const common = [
-      grid && <CartesianGrid stroke="var(--border)" vertical={false} />}
-      <XAxis {...axis} />
-      <YAxis tick={{ fontSize: 10 }} stroke="var(--muted-foreground)" width={56} />
-      <Tooltip
-        contentStyle={{
-          borderRadius: 0,
-          border: "1px solid var(--color-border)",
-          fontSize: 12,
-          background: "var(--card)",
-        }}
-      />
-      {legend && <Legend wrapperStyle={{ fontSize: 11 }} />}
-    </>
-  );
+    grid ? <CartesianGrid key="grid" stroke="var(--border)" vertical={false} /> : null,
+    <XAxis key="x" {...axis} />,
+    <YAxis key="y" tick={{ fontSize: 10 }} stroke="var(--muted-foreground)" width={56} />,
+    <Tooltip
+      key="tip"
+      contentStyle={{
+        borderRadius: 0,
+        border: "1px solid var(--border)",
+        fontSize: 12,
+        background: "var(--card)",
+      }}
+    />,
+    legend ? <Legend key="legend" wrapperStyle={{ fontSize: 11 }} /> : null,
+  ];
+
 
   return (
     <div className="h-72 w-full sm:h-80">
