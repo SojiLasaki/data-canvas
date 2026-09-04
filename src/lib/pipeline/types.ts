@@ -58,6 +58,13 @@ export interface AttributeRef {
   usedBy: string[];
 }
 
+export interface Branch {
+  id: string;
+  stepId: string;
+  /** where this intermediate result is sent */
+  target: string;
+}
+
 export interface Pipeline {
   id: string;
   prompt: string;
@@ -66,6 +73,8 @@ export interface Pipeline {
   attributes: AttributeRef[];
   /** attribute -> visualization channel mapping */
   channels: Record<string, string>;
+  /** side outputs taken from an intermediate step */
+  branches: Branch[];
 }
 
 export interface ResultRow {

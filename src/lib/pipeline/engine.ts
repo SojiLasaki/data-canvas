@@ -402,5 +402,6 @@ export function buildPipeline(prompt: string): Pipeline {
     sources,
     attributes: ATTRIBUTES.map((a) => (pricing && a.name === "Load" ? { ...a, name: "Price", unit: "$/MWh" } : a)),
     channels: { Timestamp: "X axis", Load: "Y axis", Price: "Y axis", Location: "Group by" },
+    branches: [],
   };
 }
