@@ -62,7 +62,7 @@ export function makeNode(
     transform: {
       dataType: "time-series",
       structured: true,
-      supportedInputs: ["time-series", "tabular", "pricing"],
+      supportedInputs: ["time-series", "tabular", "pricing", "parameter"],
       supportedOutputs: ["time-series", "tabular", "pricing"],
     },
     compare: {

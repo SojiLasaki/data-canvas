@@ -92,7 +92,7 @@ const edgeTypes = { miso: MisoEdgeLine };
 
 function CanvasPage() {
   const { q, from } = Route.useSearch();
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, fitView } = useReactFlow();
   const wrapper = useRef<HTMLDivElement>(null);
 
   const [nodes, setNodes] = useState<MisoNode[]>([]);
@@ -106,6 +106,7 @@ function CanvasPage() {
   const [run, setRun] = useState<RunState>({ phase: "idle" });
   const [tab, setTab] = useState("assistant");
   const generatedFor = useRef<string | null>(null);
+  const importedPipeline = useRef(false);
 
   const selectedNode = useMemo(() => nodes.find((n) => n.selected) ?? null, [nodes]);
   const upstream = useMemo(() => {
@@ -153,12 +154,14 @@ function CanvasPage() {
   }, [q, generate]);
 
   useEffect(() => {
-    if (from !== "result") return;
+    if (from !== "result" || importedPipeline.current) return;
+    importedPipeline.current = true;
     const pipeline = pipelineStore.load();
     if (!pipeline) return;
     const graph = pipelineToGraph(pipeline);
     setNodes(graph.nodes);
     setEdges(graph.edges);
+    window.setTimeout(() => fitView({ padding: 0.2 }), 60);
     setMessages((m) => [
       ...m,
       {
@@ -168,7 +171,7 @@ function CanvasPage() {
         workflow: pipeline.steps.map((s) => s.title),
       },
     ]);
-  }, [from]);
+  }, [from, fitView]);
 
   useEffect(() => {
     if (!q && from !== "result") {
