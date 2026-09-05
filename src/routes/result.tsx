@@ -148,14 +148,39 @@ function ResultPage() {
         <TabsTrigger value="modifiers">Modifiers</TabsTrigger>
         <TabsTrigger value="sources">Sources</TabsTrigger>
       </TabsList>
-      <TabsContent value="canvas" className="min-h-0 flex-1 space-y-2 overflow-y-auto pt-3">
-        <p className="text-xs text-muted-foreground">
-          {pipeline.steps.length} nodes · the same workflow that produced this result
-        </p>
-        <InlineCanvas pipeline={pipeline} />
-        <Button variant="outline" size="sm" onClick={openInCanvas}>
-          <Workflow className="mr-1.5 h-3.5 w-3.5" /> Open in full canvas
-        </Button>
+      <TabsContent value="canvas" className="min-h-0 flex-1 space-y-2 overflow-hidden pt-3">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">
+            {pipeline.steps.length} nodes · click a node to see its modifier settings
+          </p>
+          <Button variant="outline" size="sm" onClick={openInCanvas}>
+            <Workflow className="mr-1.5 h-3.5 w-3.5" /> Open in full canvas
+          </Button>
+        </div>
+        <div className="flex min-h-0 flex-col gap-3 lg:flex-row">
+          <InlineCanvas
+            pipeline={pipeline}
+            className="h-[52vh] min-h-[360px] flex-1"
+            selectedStepId={selectedId}
+            onSelectStep={setSelectedId}
+          />
+          <div className="w-full shrink-0 overflow-y-auto lg:h-[52vh] lg:w-[340px]">
+            {selected ? (
+              <StepDetails
+                pipeline={pipeline}
+                step={selected}
+                onParam={(k, v) => setParam(selected.id, k, v)}
+                onToggle={(v) => toggleStep(selected.id, v)}
+                onAddBranch={(t) => addBranch(selected.id, t)}
+                onClose={() => setSelectedId(null)}
+              />
+            ) : (
+              <div className="border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
+                Select a node on the canvas to inspect and edit its settings, inputs and outputs.
+              </div>
+            )}
+          </div>
+        </div>
       </TabsContent>
       <TabsContent value="modifiers" className="min-h-0 flex-1 space-y-3 overflow-y-auto pt-3">
         <PipelineStack
