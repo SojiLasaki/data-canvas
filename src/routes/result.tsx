@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
-import { ChevronDown, Layers, Send, Sparkles, Workflow } from "lucide-react";
+import { Layers, Send, Sparkles, Workflow } from "lucide-react";
 import { toast } from "sonner";
 
 import { SiteHeader } from "@/components/SiteHeader";
@@ -54,7 +54,6 @@ function ResultPage() {
   const [advanced, setAdvanced] = useState(false);
   const [command, setCommand] = useState("");
   const [log, setLog] = useState<string[]>([]);
-  const [canvasOpen, setCanvasOpen] = useState(false);
 
 
   useEffect(() => {
@@ -197,7 +196,7 @@ function ResultPage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <main className="mx-auto flex max-w-7xl gap-6 px-4 py-6 lg:px-6">
+      <main className="mx-auto flex max-w-7xl gap-6 px-4 pb-32 pt-6 lg:px-6">
         <div className="min-w-0 flex-1 space-y-5">
           <div>
             <p className="label-caps text-muted-foreground">Your question</p>
