@@ -29,14 +29,20 @@ function toNodeData(step: PipelineStep): MisoNodeData {
 }
 
 /** Project the shared pipeline into canvas nodes/edges. */
-export function pipelineToGraph(pipeline: Pipeline): { nodes: MisoNode[]; edges: MisoEdge[] } {
+export function pipelineToGraph(pipeline: Pipeline): {
+  nodes: MisoNode[];
+  edges: MisoEdge[];
+  stepByNode: Record<string, string>;
+} {
   const nodes: MisoNode[] = [];
   const byStep = new Map<string, MisoNode>();
+  const stepByNode: Record<string, string> = {};
 
   pipeline.steps.forEach((step, i) => {
     const node = createNode(toNodeData(step), { x: 60 + i * 300, y: 120 + (i % 2) * 90 });
     nodes.push(node);
     byStep.set(step.id, node);
+    stepByNode[node.id] = step.id;
   });
 
   const edges: MisoEdge[] = [];
@@ -62,5 +68,5 @@ export function pipelineToGraph(pipeline: Pipeline): { nodes: MisoNode[]; edges:
     });
   });
 
-  return { nodes, edges };
+  return { nodes, edges, stepByNode };
 }
