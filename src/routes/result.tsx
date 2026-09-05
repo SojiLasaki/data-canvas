@@ -143,11 +143,21 @@ function ResultPage() {
   };
 
   const advancedPanel = (
-    <Tabs defaultValue="modifiers" className="flex min-h-0 flex-1 flex-col gap-0">
-      <TabsList className="grid w-full grid-cols-2">
+    <Tabs defaultValue="canvas" className="flex min-h-0 flex-1 flex-col gap-0">
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="canvas">Node canvas</TabsTrigger>
         <TabsTrigger value="modifiers">Modifiers</TabsTrigger>
         <TabsTrigger value="sources">Sources</TabsTrigger>
       </TabsList>
+      <TabsContent value="canvas" className="min-h-0 flex-1 space-y-2 overflow-y-auto pt-3">
+        <p className="text-xs text-muted-foreground">
+          {pipeline.steps.length} nodes · the same workflow that produced this result
+        </p>
+        <InlineCanvas pipeline={pipeline} />
+        <Button variant="outline" size="sm" onClick={openInCanvas}>
+          <Workflow className="mr-1.5 h-3.5 w-3.5" /> Open in full canvas
+        </Button>
+      </TabsContent>
       <TabsContent value="modifiers" className="min-h-0 flex-1 space-y-3 overflow-y-auto pt-3">
         <PipelineStack
           pipeline={pipeline}
@@ -181,6 +191,7 @@ function ResultPage() {
       </TabsContent>
     </Tabs>
   );
+
 
   return (
     <div className="min-h-screen bg-background">
