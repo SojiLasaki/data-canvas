@@ -278,11 +278,11 @@ function ResultPage() {
                   <Layers className="mr-1.5 h-4 w-4" /> Show how this data was created
                 </Button>
               </DrawerTrigger>
-              <DrawerContent className="max-h-[88vh]">
+              <DrawerContent className="max-h-[92vh]">
                 <DrawerHeader>
                   <DrawerTitle className="text-sm">How this data was created</DrawerTitle>
                 </DrawerHeader>
-                <div className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col overflow-y-auto px-4 pb-6">
+                <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-y-auto px-4 pb-6 lg:px-8">
                   {advancedPanel}
                 </div>
               </DrawerContent>
