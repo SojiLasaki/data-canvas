@@ -17,12 +17,23 @@ import { MisoEdgeLine } from "@/components/canvas/MisoEdgeLine";
 import { pipelineToGraph } from "@/lib/pipeline/graph";
 import type { MisoEdge, MisoNode } from "@/lib/canvas/graph";
 import type { Pipeline } from "@/lib/pipeline/types";
+import { cn } from "@/lib/utils";
 
 const nodeTypes = { miso: MisoNodeCard };
 const edgeTypes = { miso: MisoEdgeLine };
 
 /** A compact, read-mostly projection of the shared pipeline as a node graph. */
-export function InlineCanvas({ pipeline }: { pipeline: Pipeline }) {
+export function InlineCanvas({
+  pipeline,
+  className,
+  selectedStepId,
+  onSelectStep,
+}: {
+  pipeline: Pipeline;
+  className?: string;
+  selectedStepId?: string | null;
+  onSelectStep?: (stepId: string | null) => void;
+}) {
   const graph = useMemo(() => pipelineToGraph(pipeline), [pipeline]);
   const [nodes, setNodes] = useState<MisoNode[]>(graph.nodes);
   const [edges, setEdges] = useState<MisoEdge[]>(graph.edges);
@@ -32,16 +43,26 @@ export function InlineCanvas({ pipeline }: { pipeline: Pipeline }) {
     setEdges(graph.edges);
   }, [graph]);
 
+  const painted = useMemo(
+    () => nodes.map((n) => ({ ...n, selected: graph.stepByNode[n.id] === selectedStepId })),
+    [nodes, graph, selectedStepId],
+  );
+
   return (
-    <div className="h-[420px] w-full border border-border bg-canvas">
+    <div className={cn("h-[420px] w-full border border-border bg-canvas", className)}>
       <ReactFlowProvider>
         <ReactFlow<MisoNode, MisoEdge>
-          nodes={nodes}
+          nodes={painted}
           edges={edges}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           onNodesChange={(changes: NodeChange<MisoNode>[]) => setNodes((n) => applyNodeChanges(changes, n))}
           onEdgesChange={(changes: EdgeChange<MisoEdge>[]) => setEdges((e) => applyEdgeChanges(changes, e))}
+          onNodeClick={(_, node) => {
+            const stepIdValue = graph.stepByNode[node.id];
+            if (stepIdValue) onSelectStep?.(stepIdValue === selectedStepId ? null : stepIdValue);
+          }}
+          onPaneClick={() => onSelectStep?.(null)}
           fitView
           fitViewOptions={{ padding: 0.2 }}
           minZoom={0.2}
