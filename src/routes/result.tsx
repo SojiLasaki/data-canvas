@@ -246,64 +246,24 @@ function ResultPage() {
             <ResultTable result={result} onOpenInCanvas={openInCanvas} />
           </section>
 
-          {/* Ask a follow-up — same pipeline the controls edit */}
-          <section className="border border-border bg-card px-4 py-3">
-            <form
-              className="flex gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!command.trim()) return;
-                ask(command.trim());
-                setCommand("");
-              }}
-            >
-              <Input
-                value={command}
-                onChange={(e) => setCommand(e.target.value)}
-                placeholder="Refine in plain language — e.g. “make this weekly” or “only show Michigan”"
-                aria-label="Refine this result"
-              />
-              <Button type="submit" size="sm">
-                <Send className="mr-1.5 h-3.5 w-3.5" /> Ask
-              </Button>
-            </form>
-            {log.length > 0 && (
-              <div className="mt-2 space-y-1">
-                {log.slice(-6).map((line, i) => (
-                  <p
-                    key={`${line}-${i}`}
-                    className={cn("text-xs", line.startsWith("You:") ? "text-muted-foreground" : "text-navy")}
-                  >
-                    {line}
-                  </p>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* Progressive disclosure */}
-          <div className="lg:hidden">
-            <Drawer>
+          {/* Progressive disclosure — opens from the bottom on every screen size */}
+          <div>
+            <Drawer open={advanced} onOpenChange={setAdvanced}>
               <DrawerTrigger asChild>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full lg:w-auto">
                   <Layers className="mr-1.5 h-4 w-4" /> Show how this data was created
                 </Button>
               </DrawerTrigger>
-              <DrawerContent className="max-h-[85vh]">
+              <DrawerContent className="max-h-[88vh]">
                 <DrawerHeader>
                   <DrawerTitle className="text-sm">How this data was created</DrawerTitle>
                 </DrawerHeader>
-                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6">{advancedPanel}</div>
+                <div className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col overflow-y-auto px-4 pb-6">
+                  {advancedPanel}
+                </div>
               </DrawerContent>
             </Drawer>
-          </div>
-
-          <div className="hidden lg:block">
-            <Button variant="ghost" size="sm" onClick={() => setAdvanced((a) => !a)} aria-expanded={advanced}>
-              <ChevronDown className={cn("mr-1.5 h-4 w-4 transition-transform", advanced && "rotate-180")} />
-              {advanced ? "Hide" : "Show"} how this data was created
-            </Button>
-            <span className="ml-2 text-xs text-muted-foreground">
+            <span className="ml-0 mt-2 block text-xs text-muted-foreground lg:ml-3 lg:mt-0 lg:inline">
               {pipeline.steps.filter((s) => s.enabled).length} active steps ·{" "}
               {pipeline.sources.length} sources ·{" "}
               <Link to="/canvas" search={{}} className="text-primary hover:underline">
@@ -311,52 +271,49 @@ function ResultPage() {
               </Link>
             </span>
           </div>
-
-          {/* Hidden node canvas — expands in place at the bottom of the page */}
-          <section className="border border-border bg-card" aria-label="Node canvas">
-            <button
-              type="button"
-              onClick={() => setCanvasOpen((c) => !c)}
-              aria-expanded={canvasOpen}
-              className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50"
-            >
-              <span className="flex items-center gap-2 text-sm font-semibold text-navy">
-                <Workflow className="h-4 w-4 text-primary" aria-hidden /> Node canvas
-                <span className="text-xs font-normal text-muted-foreground">
-                  {pipeline.steps.length} nodes · same workflow as above
-                </span>
-              </span>
-              <ChevronDown
-                className={cn("h-4 w-4 text-muted-foreground transition-transform", canvasOpen && "rotate-180")}
-                aria-hidden
-              />
-            </button>
-            {canvasOpen && (
-              <div className="space-y-2 border-t border-border p-3">
-                <InlineCanvas pipeline={pipeline} />
-                <Button variant="outline" size="sm" onClick={openInCanvas}>
-                  <Workflow className="mr-1.5 h-3.5 w-3.5" /> Open in full canvas
-                </Button>
-              </div>
-            )}
-          </section>
-
         </div>
-
-        {/* Advanced column */}
-        {advanced && (
-          <aside
-            className="hidden w-96 shrink-0 flex-col border-l border-border pl-4 lg:flex"
-            aria-label="How this data was created"
-          >
-            <p className="label-caps pb-2 text-muted-foreground">How this data was created</p>
-            {advancedPanel}
-          </aside>
-        )}
       </main>
+
+      {/* Floating follow-up chat — same pipeline the controls edit */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pb-4">
+        <div className="pointer-events-auto mx-auto w-full max-w-3xl border border-border bg-card px-3 py-2.5 shadow-lg">
+          {log.length > 0 && (
+            <div className="mb-2 max-h-32 space-y-1 overflow-y-auto">
+              {log.slice(-6).map((line, i) => (
+                <p
+                  key={`${line}-${i}`}
+                  className={cn("text-xs", line.startsWith("You:") ? "text-muted-foreground" : "text-navy")}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
+          )}
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!command.trim()) return;
+              ask(command.trim());
+              setCommand("");
+            }}
+          >
+            <Input
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              placeholder="Refine in plain language — e.g. “make this weekly” or “only show Michigan”"
+              aria-label="Refine this result"
+            />
+            <Button type="submit" size="sm">
+              <Send className="mr-1.5 h-3.5 w-3.5" /> Ask
+            </Button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
+
 
 /** Keep the linear chain intact after inserts, deletes and reorders. */
 function relink(steps: Pipeline["steps"]): Pipeline["steps"] {
